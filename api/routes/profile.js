@@ -8,7 +8,8 @@ const imageUpload = require('../middleware/imageUpload');
 const profileController = require('../controllers/profile');
 
 router.get('/', checkAuth, profileController.getProfileData);
-router.put('/', imageUpload.single('avatar'), checkAuth, profileController.updateProfile);
+router.put('/', checkAuth, profileController.updateProfile);
+router.put('/avatar', imageUpload.single('avatar'), checkAuth, profileController.updateAvatar);
 router.put('/change_password', checkAuth, profileController.changePassword);
 router.delete('/', checkAuth, profileController.deleteUser);
 

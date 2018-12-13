@@ -47,18 +47,26 @@ exports.deleteUser = ({ userId }, res) => {
   });
 };
 
-exports.updateProfile = ({ userId, body, file }, res) => {
-  User.findOneAndUpdate({ _id: userId }, { ...body, avatar: file.path }, (error, user) => {
+exports.updateAvatar = ({ userId, file }, res) => {
+  User.findOneAndUpdate({ _id: userId }, { avatar: file.path }, (error, user) => {
+    if (error) return res.status(404).json({ message: 'Problems with profile update', error });
+
+    res.status(200).json({ messages: 'Avatar updated' });
+  });
+};
+
+exports.updateProfile = ({ userId, body }, res) => {
+  User.findOneAndUpdate({ _id: userId }, body, (error, user) => {
     if (error) return res.status(404).json({ message: 'Problems with profile update', error });
 
     res.status(200).json({
       user: {
-        avatar: user.avatar,
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
         age: user.age,
         gender: user.gender,
+        avatar: user.avatar,
       },
     });
   });

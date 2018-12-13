@@ -19,28 +19,41 @@ exports.getBook = ({ userId, params }, res) => {
   });
 };
 
-exports.createBook = ({ userId, body }, res) => {
+exports.createBook = ({ userId, body, file }, res) => {
   const book = new Book({
     _id: mongoose.Types.ObjectId(),
     userId,
-    ...body,
+    title: body.title,
+    description: body.description,
+    author: body.author,
+    pages: body.pages,
+    published: body.published,
+    image: file.path,
   });
 
   book
     .save()
     .then(book => {
-      res.status(201).json({ book });
+      return res.status(201).json({ book });
     })
     .catch(error => {
-      res.status(400).json({ error });
+      return res.status(400).json({ error });
     });
 };
 
 exports.updateBook = ({ params, body }, res, next) => {
-  Book.findOneAndUpdate({ _id: params.bookId }, { ...body }, err => {
+  Book.findOneAndUpdate({ _id: params.bookId }, body, (err, book) => {
     if (err) return res.status(400).json({ err });
 
-    res.status(204).json({});
+    res.status(204).json({ book });
+  });
+};
+
+exports.updateBookImage = ({ params, file }, res, next) => {
+  Book.findOneAndUpdate({ _id: params.bookId }, { image: file.path }, (err, book) => {
+    if (err) return res.status(400).json({ err });
+
+    res.status(200).json({ message: "Book's cover updated" });
   });
 };
 
